@@ -191,8 +191,27 @@ function verPropriedades(propriedades){
 
 
 // funcao ver lista de reservas (ordem cronologica)
+
+function ordenarDatas(listaDatas) {
+    return listaDatas.sort((data1, data2) => data1.getTime() - data2.getTime());
+  }
+
 function verReservas (reservas){
-    
+    var datas = []
+    for (let i = 0; i<reservas.length; i+=1){
+        var reserva = reservas[i]
+        var data = reserva.checkIn
+        datas.push(data)
+    }
+    for (let j = 0; j<datas.length; j+=1){
+        var data = datas[j]
+        for (let i = 0; i<reservas.length; i+=1){
+            var reserva = reservas[i]
+           if (data==reserva.checkIn){
+            console.log(reserva)
+           }
+        }
+    } 
 }
 
 
@@ -213,7 +232,7 @@ function verAnuncios(anuncios){
         for (let j=0; j<anuncios.length; j+=1){
             let anuncio = anuncios[j]
             if (anuncio.nome == nome_o){
-                console.log(propriedade)
+                console.log(anuncio)
             }
         }
     }
@@ -223,7 +242,129 @@ function verAnuncios(anuncios){
 
 // funcao reservar propriedade 
 
-function reservarPropriedade(propriedades, reservas){
+function idExisteR(id, reservas){
+    var id_existe = false
+    for (let i = 0; i<reservas.length; i+=1){
+        var reserva=reservas[i]
+        if (reserva.id == id){
+            id_existe = true
+            break  
+        }
+}
+    return id_existe;
+}
+
+function calcularDiferencaEmDias(data1, data2) {
+    const diferencaEmMilissegundos = Math.abs(data2 - data1);
+  
+    const umDiaEmMilissegundos = 24 * 60 * 60 * 1000; // 1 dia em milissegundos
+    const diferencaEmDias = Math.floor(diferencaEmMilissegundos / umDiaEmMilissegundos);
+  
+    return diferencaEmDias;
+  }
+
+function reservarPropriedade(usuarios, propriedades, reservas){
+    while (true){
+        var id = requisicao.question('Escolha um id de 5 digitos: ')
+        if (idExisteR(id, reservas)==false){
+            var idn = id
+            break
+        }
+        else if (idExisteR(id, reservas) == true){
+            console.log('Esse id ja existe, por favor escolha outro')
+        } 
+    }
+
+    while (true){
+        var propriedadeId = requisicao.question('Digite o id da propriedade: ')
+        if (idExistep(propriedadeId, propriedades)==false){
+            console.log('Esse id nao existe, por favor escolha outro')
+        }
+        else if (idExistep(propriedadeId, propriedades) == true){
+            var idPropriedade = propriedadeId
+            break
+        } 
+    }
+
+    if (disponibilidade())
+
+    while (true){
+        var usuarioId = requisicao.question('Digite o id do usuario: ')
+        if (idExiste(usuarioId, usuarios)==false){
+            console.log('Esse id nao existe, por favor escolha outro')
+        }
+        else if (idExistep(usuarioId, usuarios) == true){
+            var idUsuario = usuarioId
+            break
+        } 
+    }
+    for (let i = 0; i<propriedades.length; i+=1){
+        var propriedade = propriedades[i]
+        if (idPropriedade==propriedade.id){
+            var propriedadeA = propriedade
+            break
+        }
+    }
+    if (disponibilidade(propriedadeA) == false){
+        return ('Nao eh possivel realizar a reserva, pois a propriedade nao tem disponibilidade')
+    }
+
+    var numP = requisicao.question('Digite o numero de pessoas: ')
+    var numPessoas = number(numP)
+
+    
+    var anoCI = requisicao.question('Digite o ano do check in (YYYY): ')
+    var CIano = number(anoCI)
+    var mesCI = requisicao.question('Digite o mes do check in (janeiro = 0): ')
+    var CImes = number(mesCI)
+    var diaCI = requisicao.question('Digite o dia do check in: ')
+    var CIdia = number(diaCI)
+    var horaCI = requisicao.question('Digite a hora do check in: ')
+    var CIhora = number(horaCI)
+    var minutoCI = requisicao.question('Digite o minuto do check in: ')
+    var CIminuto = number(minutoCI)
+    var checkin = new Date (CIano, CImes, CIdia, CIhora, CIminuto, 0, 0)
+
+    var anoCO = requisicao.question('Digite o ano do check out (YYYY): ')
+    var COano = number(anoCO)
+    var mesCO = requisicao.question('Digite o mes do check out (janeiro = 0): ')
+    var COmes = number(mesCO)
+    var diaCO = requisicao.question('Digite o dia do check out: ')
+    var COdia = number(diaCO)
+    var horaCO = requisicao.question('Digite a hora do check out: ')
+    var COhora = number(horaCO)
+    var minutoCO = requisicao.question('Digite o minuto do check out: ')
+    var COminuto = number(minutoCO)
+    var checkOut = new Date (COano, COmes, COdia, COhora, COminuto, 0, 0)
+
+    var diarias = calcularDiferencaEmDias(checkin, checkOut)
+    var valorTotal = (propriedade.precoPorNoite)*diarias
+
+    var statusPagamento = requisicao.question('Digite o status do pagamento: ')
+
+    propriedadeA.numQuartos = propriedadeA.numQuartos - 1
+    propriedadeA.capacidadeHospedes = propriedadeA.capacidadeHospedes - numPessoas
+
+    for (let i = 0; i<propriedades.length; i+=1){
+        var propriedade = propriedades[i]
+        if (propriedadeA.id==propriedade.id){
+            propriedades[i] = propriedadeA
+            break
+        }
+    }
+
+    var reserva = new Reserva (idn, idPropriedade, idUsuario, checkin, checkOut, valorTotal, statusPagamento)
+    var reservas_atualizadas = reservas.push(reserva)
+
+    for (let i = 0; i<usuarios.length; i+=1){
+        var usuario = usuarios[i]
+        if (idUsuario==usuario.id){
+            usuario.historicoReservas = usuario.historicoReservas.push(reserva)
+            break
+        }
+    }
+    
+    return {res1:propriedades, res2: reservas_atualizadas, res3: usuarios}
 
 }
 
@@ -355,7 +496,7 @@ function fazerAnuncio(anuncios, propriedades){
     var descricao = requisicao.question('Digite a descricao do anuncio: ')
     
     for (let i = 0; i<propriedades.length; i+=1){
-        propriedade = propriedades[i]
+        var propriedade = propriedades[i]
         if (idPropriedade==propriedade.id){
             var propriedadeA = propriedade
         }
@@ -426,7 +567,7 @@ function main(){
         var opcao = requisicao.question('Digite uma opcao: ');
 
         if (opcao=='1'){
-            var usuarios = sistema.propriedades
+            var usuarios = sistema.usuarios
             var resultado = fazerLogin(usuarios)
             var logado = resultado.chave1
             var id = resultado.chave2
@@ -481,7 +622,16 @@ function main(){
                     }
 
                     if (opcao =='6'){
-
+                        let usuarios = sistema.usuarios
+                        let propriedades = sistema.propriedades
+                        let reservas = sistema.reservas
+                        var resultadoo = reservarPropriedade(usuarios, propriedades, reservas)
+                        var usuarios_atualizados = resultadoo.res3
+                        var reservas_atualizadas = resultadoo.res2
+                        var propriedades_atualizada = resultadoo.res1
+                        sistema.propriedades = propriedades_atualizada
+                        sistema.reservas = reservas_atualizadas
+                        sistema.usuarios = usuarios_atualizados
                     }
 
                     if (opcao == '7'){

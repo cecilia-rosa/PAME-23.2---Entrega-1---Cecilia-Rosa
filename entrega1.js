@@ -341,7 +341,7 @@ function fazerAnuncio(anuncios, propriedades){
     }
 
     var proprietarioId = requisicao.question('Digite o id do proprietario: ')
-
+    
     while (true){
         var propriedadeId = requisicao.question('Digite o id da propriedade: ')
         if (idExistep(propriedadeId, propriedades)==false){
@@ -352,9 +352,24 @@ function fazerAnuncio(anuncios, propriedades){
             break
         } 
     }
-
+    var descricao = requisicao.question('Digite a descricao do anuncio: ')
     
+    for (let i = 0; i<propriedades.length; i+=1){
+        propriedade = propriedades[i]
+        if (idPropriedade==propriedade.id){
+            var propriedadeA = propriedade
+        }
+    }
+    if (disponibilidade(propriedadeA) == true){
+        disp = 'disponivel'
+    }
+    else if (disponibilidade(propriedadeA) == false){
+        disp = 'indisponivel'
+    }
 
+    var anuncio = new Anuncio (idn, proprietarioId, idPropriedade, titulo, descricao, disp)
+    anuncios_atualizados = anuncios.push(anuncio)
+    return anuncios_atualizados 
 }
 
 // funcao excluir anuncio 
@@ -453,19 +468,16 @@ function main(){
                     if (opcao=='3'){
                         var propriedades = sistema.propriedades
                         verPropriedades(propriedades)
-
                     }
 
                     if (opcao =='4'){
                         var reservas = sistema.reservas
                         verReservas(reservas)
-
                     }
 
                     if (opcao =='5'){
                         var anuncios = sistema.anuncios
                         verAnuncios(anuncios)
-
                     }
 
                     if (opcao =='6'){
@@ -490,7 +502,10 @@ function main(){
                     }
 
                     if (opcao == '10'){
-                        
+                        let anuncios = sistema.anuncios
+                        let propriedades = sistema.propriedades
+                        anuncios_atualizados = fazerAnuncio(anuncios, propriedades)
+                        sistema.anuncios = anuncios_atualizados 
                     }
 
                     if (opcao == '11'){

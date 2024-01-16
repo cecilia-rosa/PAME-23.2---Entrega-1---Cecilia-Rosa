@@ -18,7 +18,7 @@ class Administrador extends Usuario {
     }
   }
 
-  class Proprietario extends Usuario {
+class Proprietario extends Usuario {
     constructor(id, nome, enderecoContato, historicoReservas, senha, propriedade) {
       super(id, nome, enderecoContato, historicoReservas, senha);
       this.propriedade = propriedade;
@@ -78,6 +78,7 @@ class Avaliacao {
 class Sistema {
     constructor() {
       this.propriedades = [];
+      this.usuarios = [];
       this.reservas = [];
       this.anuncios = [];
       this.avaliacoes = []
@@ -117,7 +118,7 @@ function fazerLogin(usuarios){
         if (usuario.nome==nome && usuario.senha==senha){
             console.log('O login foi realizado com sucesso')
             logado=true
-            ID = usuario.id //acha id do usuario logado
+            ID = usuario.id //acha id do usuario logado, informacao vai ver usada para outras funcionalidades
             break
         }
     }
@@ -143,7 +144,7 @@ function idExiste(id, usuarios){
 function fazerCadastro(usuarios){
     var requisicao = require('readline-sync')
     var nome = requisicao.question('Digite o seu nome: ')
-    while (true){
+    while (true){ //gera id aleatorio ate ser um nao ja registrado
         var id = gerarIdAleatorio()
         if (idExiste(id, usuarios)==false){
             var idn = id
@@ -163,7 +164,7 @@ function fazerCadastro(usuarios){
 // funcao ver os proprios dados
 
 function verDados(id, usuarios){
-    for (let i = 0; i<usuarios.length; i+=1){ //percorre lista de usuarios para achar o usuario do id logado
+    for (let i = 0; i<usuarios.length; i+=1){ //percorre lista de usuarios para achar o usuario do id logado e entao printar cada informacao (exceto id)
         var usuario = usuarios[i]
         if (id==usuario.id){
             console.log('Nome:')
@@ -194,7 +195,7 @@ function modificarDados(id, usuarios){
             var endereco = requisicao.question('Digite o novo endereco: ')
             var senha = requisicao.question('Digite a nova senha: ')
             usuario_modificado = new Usuario(id, nome, endereco, historicoReservas, senha)
-            //atualiza a posicao i para o novo usuario
+            //atualiza a posicao i para o novo usuario, modificando assim a lista usuarios
             usuarios[i] = usuario_modificado
         }
     }
@@ -340,6 +341,7 @@ function idExisteR(id, reservas){
     return id_existe;
 }
 
+// funcao auxiliar que calcula quantos dias (em modulo) ha entre duas datas 
 function calcularDiferencaEmDias(data1, data2) {
     const diferencaEmMilissegundos = Math.abs(data2 - data1);
   
@@ -379,7 +381,7 @@ function nomeExistep(nome, propriedades){
 // funcao reservar propriedade 
 
 function reservarPropriedade(idusuario, usuarios, propriedades, reservas){
-    while (true){ //fica em loop ate que um id nao registrado seja escolhido
+    while (true){ //fica em loop ate que um id nao registrado seja gerado
         var id = gerarIdAleatorio()
         if (idExisteR(id, reservas)==false){
             var idn = id
@@ -401,7 +403,7 @@ function reservarPropriedade(idusuario, usuarios, propriedades, reservas){
         } 
     }
 
-    for (let i = 0; i<propriedades.length; i+=1){ //encontra a propriedade na lista de propriedades
+    for (let i = 0; i<propriedades.length; i+=1){ //encontra a propriedade na lista de propriedades, atraves do nome fornecido
         var propriedade = propriedades[i]
         if (nomePropriedade==propriedade.nome){
             var propriedadeA = propriedade
@@ -656,7 +658,7 @@ function main(){
     var reservas = sistema.reservas
     var anuncios = sistema.anuncios
     var avaliacoes = sistema.avaliacoes
-    var usuarioLogado = sistema.usuarioLogado
+    var usuarios = sistema.usuarios
     while (true){
         console.log('Seja bem-vindo ao sistema digital de reservas da Pousada Eclipse!')
         console.log('1. Fazer login')
@@ -718,9 +720,11 @@ function main(){
                     if (opcao =='6'){//6. Reservar propriedade
                         let idUsuario = sistema.usuarioLogado
                         let resultadoo = reservarPropriedade(idUsuario,usuarios, propriedades, reservas)
-                        usuarios = resultadoo.res3
-                        reservas = resultadoo.res2
-                        propriedades = resultadoo.res1
+                        if (resultadoo != 'Nao eh possivel realizar a reserva, pois a propriedade nao tem disponibilidade'){
+                            usuarios = resultadoo.res3
+                            reservas = resultadoo.res2
+                            propriedades = resultadoo.res1
+                        }
                     }
 
                     if (opcao == '7'){//7. Cancelar reserva

@@ -146,13 +146,20 @@ function fazerCadastro(usuarios){
 
 
 
-// funcao ver os proprios dados (foram printados todos porque ainda nao consegui gerar um id aleatorio e o tirar das funcoes)
+// funcao ver os proprios dados
 
 function verDados(id, usuarios){
-    for (let i = 0; i<usuarios.length; i+=1){
+    for (let i = 0; i<usuarios.length; i+=1){ //percorre lista de usuarios para achar o usuario do id logado
         var usuario = usuarios[i]
         if (id==usuario.id){
-            console.log(usuario)
+            console.log('Nome:')
+            console.log(usuario.nome)
+            console.log('Endereco de contato:')
+            console.log(usuario.enderecoContato)
+            console.log('Historico de reservas')
+            console.log(usuario.historicoReservas)
+            console.log('Senha:')
+            console.log(usuario.senha)
         }
     }
 }
@@ -166,12 +173,13 @@ function modificarDados(id, usuarios){
         var usuario = usuarios[i]
         if(usuario.id==id){
             console.log('Essas sao as informacoes cadastradas:')
-            console.log(usuario)
+            verDados(id, usuarios)
             var historicoReservas = usuario.historicoReservas
             var requisicao = require('readline-sync')
             var nome = requisicao.question('Digite o novo nome: ')
             var endereco = requisicao.question('Digite o novo endereco: ')
-            usuario_modificado = new Usuario(id, nome, endereco, historicoReservas)
+            var senha = requisicao.question('Digite a nova senha: ')
+            usuario_modificado = new Usuario(id, nome, endereco, historicoReservas, senha)
             //atualiza a posicao i para o novo usuario
             usuarios[i] = usuario_modificado
         }
@@ -190,13 +198,32 @@ function verPropriedades(propriedades){
         var nomep = propriedade.nome
         nomes_p.push(nomep)
     }
+    var requisicao = require('readline-sync')
+    var autorizacao = requisicao.question('Digite o codigo para visualizacao das propriedades:  ')
     var nomes_ordem = nomes_p.sort() // organiza a lista de nomes em ordem alfabetica
     for (let i=0; i<nomes_ordem.length; i+=1){ //percorre a lista de nomes ao mesmo tempo que a lista de propriedades, para entao printar na ordem salva na lista de nomes
         let nome_o = nomes_ordem[i]
         for (let j=0; j<propriedades.length; j+=1){
             let propriedade = propriedades[j]
             if (propriedade.nome == nome_o){
-                console.log(propriedade)
+                if (autorizacao != '1234'){
+                    console.log('Nome:')
+                    console.log(propriedade.nome)
+                    console.log('Endereco:')
+                    console.log(propriedade.endereco)
+                    console.log('Capacidade de hospedes:')
+                    console.log(propriedade.capacidadeHospedes)
+                    console.log('Numero de quartos:')
+                    console.log(propriedade.numQuartos)
+                    console.log('Preco por noite:')
+                    console.log(propriedade.precoPorNoite)
+                    console.log('Disponibilidade:')
+                    console.log(propriedade.disponibilidade)
+                }
+                if (autorizacao == '1234'){
+                    console.log(propriedade)
+                }
+        
             }
         }
     }
@@ -211,6 +238,11 @@ function ordenarDatas(listaDatas) {
 
 // funcao ver lista de reservas (ordem cronologica)
 function verReservas (reservas){
+    var requisicao = require('readline-sync')
+    var autorizacao = requisicao.question('Digite o codigo para visualizacao de todas as reservas:  ')
+    if (autorizacao != '1234'){
+        return ('Apenas funcionarios autorizados podem visualizar todas as reservas')
+    }
     var datas = [] // cria lista de datas vazias para armazena-las
     for (let i = 0; i<reservas.length; i+=1){
         let reserva = reservas[i]
@@ -223,7 +255,8 @@ function verReservas (reservas){
         for (let i = 0; i<reservas.length; i+=1){
             let reserva = reservas[i]
            if (data==reserva.checkIn){
-            console.log(reserva) // vai printando cada uma das reservas
+            // vai printando cada uma das reservas
+            console.log(reserva)
            }
         }
     } 
@@ -242,12 +275,25 @@ function verAnuncios(anuncios){ // funciona de forma semelhante a de ver proprie
         nomes_a.push(nomea)
     }
     var nomes_ordem = nomes_a.sort() // ordena a lista de nomes em ordem alfabetica
+    var requisicao = require('readline-sync')
+    var autorizacao = requisicao.question('Digite o codigo para visualizacao dos anuncios:  ') //pensando que os funcionarios saberiam que eh 1234 e os usuarios colocariam a propria senha
     for (let i=0; i<nomes_ordem.length; i+=1){ // percorre a lista de nomes junto com a lista de anuncios, para imprimir os anuncios na ordem em que as respectivos nomes foram organizados
         let nome_o = nomes_ordem[i]
         for (let j=0; j<anuncios.length; j+=1){
             let anuncio = anuncios[j]
             if (anuncio.nome == nome_o){
-                console.log(anuncio) // vai printando cada anuncio
+                // vai printando cada anuncio, se mostra id depende da autorizacao
+                if (autorizacao == '1234'){
+                    console.log(anuncio)
+                }
+                if (autorizacao != '1234'){
+                    console.log('Titulo: ')
+                    console.log(anuncio.titulo)
+                    console.log('Descricao:')
+                    console.log(anuncio.descricao)
+                    console.log('Status de disponibilidade')
+                    console.log(anuncio.status)
+                }
             }
         }
     }
@@ -546,7 +592,6 @@ function fazerAnuncio(anuncios, propriedades){
 // funcao excluir anuncio 
 
 function excluirAnuncio(anuncios){
-    var anuncios_atualizados = null
     var requisicao = require('readline-sync')
     var ido = requisicao.question('Qual o id do anuncio que voce deseja excluir?  ') //pede id so para administrador excluir um anuncio
     for (let i = 0; i<anuncios.length; i+=1){ //acha o anuncio do id fornecido

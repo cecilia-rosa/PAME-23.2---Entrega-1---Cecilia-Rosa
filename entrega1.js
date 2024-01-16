@@ -480,7 +480,7 @@ function cancelarReserva(reservas){
     var data_atual = new Date()
     var requisicao = require('readline-sync')
     var id = requisicao.question('Digite o id da reserva: ') //cancelamento feito apenas por adm
-    if (idExisteR(id,reservas) == false){ // confere se reserva a ser cancelada existe
+    if (idExisteR(id,reservas) == false){ // confere se reserva a ser cancelada existe, sai da funcao se nao existir
         return ('Nao eh possivel cancelar uma reserva que nao existe')
     }
     for (let i = 0; i<reservas.length; i+=1){
@@ -517,7 +517,7 @@ function adicionarPropriedade(propriedades){
     var numQuartos = number(quartos)
     var preco = requisicao.question('Digite o preco por noite: ')
     var precoPorNoite = number(preco)
-    var disponibilidade = true
+    var disponibilidade = true // considero que propriedades indisponiveis nao serao adicionadas
     var propriedade = new Propriedade (idn, nome, endereco, capacidadeHospedes, numQuartos, precoPorNoite, disponibilidade) // cria propriedade da classe Propriedades com os dados que foram pedidos
     propriedades.push(propriedade) //adiciona propriedade a lista de propriedades
     return propriedades
@@ -537,7 +537,7 @@ function excluirPropriedade(propriedades, reservas){
                 break
             }
         }
-    if (tem_reserva == false){ //so continua se n tem reserva
+    if (tem_reserva == false){ //so continua a exclusao se n tem reserva
         for (let i = 0; i<propriedades.length; i+=1){ //acha propriedade do id informado
             var propriedade = propriedades[i]
             if (idp == propriedade.id){
@@ -568,7 +568,7 @@ function idExistea(id, anuncios){
 function fazerAnuncio(anuncios, propriedades){
     var requisicao = require('readline-sync')
     var titulo = requisicao.question('Digite o titulo do anuncio: ')
-    while (true){ // garante que o id seja unico
+    while (true){ // garante que o id gerado seja unico
         var id = gerarIdAleatorio()
         if (idExistea(id, anuncios)==false){
             var idn = id
@@ -579,23 +579,23 @@ function fazerAnuncio(anuncios, propriedades){
         } 
     }
 
-    var proprietarioId = requisicao.question('Digite o id do proprietario: ')
+    var proprietarioId = gerarIdAleatorio()
     
-    while (true){ //ve se a propriedade a ser anunciada foi registrada
-        var propriedadeId = requisicao.question('Digite o id da propriedade: ')
-        if (idExistep(propriedadeId, propriedades)==false){
-            console.log('Esse id nao existe, por favor escolha outro')
+    while (true){ //ve se a propriedade a ser anunciada foi registrada, pede nome ate ser um registrado
+        var propriedadeNome= requisicao.question('Digite o nome da propriedade: ')
+        if (nomeExistep(propriedadeNome, propriedades)==false){
+            console.log('Esse nome nao existe, por favor escolha outro')
         }
-        else if (idExistep(propriedadeId, propriedades) == true){
-            var idPropriedade = propriedadeId
+        else if (nomeExistep(propriedadeNome, propriedades) == true){
+            var nomePropriedade = propriedadeNome
             break
         } 
     }
     var descricao = requisicao.question('Digite a descricao do anuncio: ')
     
-    for (let i = 0; i<propriedades.length; i+=1){ //acha propriedade atraves do id
+    for (let i = 0; i<propriedades.length; i+=1){ //acha propriedade atraves do nome
         var propriedade = propriedades[i]
-        if (idPropriedade==propriedade.id){
+        if (nomePropriedade==propriedade.nome){
             var propriedadeA = propriedade
         }
     }
@@ -605,6 +605,7 @@ function fazerAnuncio(anuncios, propriedades){
     else if (disponibilidade(propriedadeA) == false){
         disp = 'indisponivel'
     }
+    var idPropriedade = propriedadeA.id
 
     var anuncio = new Anuncio (idn, proprietarioId, idPropriedade, titulo, descricao, disp) //cria novo anuncio da classe Anuncio
     anuncios.push(anuncio) //adiciona anuncio criado a lista de anuncios, para retorna-la atualizada

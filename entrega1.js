@@ -11,14 +11,14 @@ class Usuario {
     }
   }
 
-class Administrador extends Usuario {
+class Administrador extends Usuario { //acabou nao sendo usado
     constructor(id, nome, enderecoContato, historicoReservas, senha, codigoPermissao) {
       super(id, nome, enderecoContato, historicoReservas, senha);
       this.codigoPermissao = codigoPermissao;
     }
   }
 
-class Proprietario extends Usuario {
+class Proprietario extends Usuario { //acabou nao sendo usado
     constructor(id, nome, enderecoContato, historicoReservas, senha, propriedade) {
       super(id, nome, enderecoContato, historicoReservas, senha);
       this.propriedade = propriedade;

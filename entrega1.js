@@ -444,7 +444,7 @@ function reservarPropriedade(idusuario, usuarios, propriedades, reservas){
     }
 
     var reserva = new Reserva (idn, idPropriedade, idusuario, checkin, checkOut, valorTotal, statusPagamento) // cria reserva da classe Reserva
-    var reservas_atualizadas = reservas.push(reserva)
+    reservas.push(reserva)
 
     for (let i = 0; i<usuarios.length; i+=1){ // acha usuario pelo id e adiciona reserva ao historico de reservas
         var usuario = usuarios[i]
@@ -454,7 +454,7 @@ function reservarPropriedade(idusuario, usuarios, propriedades, reservas){
         }
     }
     
-    return {res1:propriedades, res2: reservas_atualizadas, res3: usuarios} // retorna propriedades, reservas e usuarios atualizados
+    return {res1:propriedades, res2: reservas, res3: usuarios} // retorna propriedades, reservas e usuarios atualizados
 
 }
 
@@ -638,6 +638,11 @@ function verAvaliacoes(avaliacoes){
 
 function main(){
     var sistema = new Sistema()
+    var propriedades = sistema.propriedades
+    var reservas = sistema.reservas
+    var anuncios = sistema.anuncios
+    var avaliacoes = sistema.avaliacoes
+    var usuarioLogado = sistema.usuarioLogado
     while (true){
         console.log('Seja bem-vindo ao sistema digital de reservas da Pousada Eclipse!');
         console.log('1. Fazer login');

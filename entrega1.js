@@ -696,12 +696,10 @@ function main(){
                     var opcao = requisicao.question('Digite uma opcao: ')
 
                     if (opcao=='1'){//1. Ver meus dados
-                        var id = sistema.usuarioLogado;
                         verDados(id, usuarios)
                     }
 
                     if (opcao=='2'){//2. Modificar meus dados
-                        var id = sistema.usuarioLogado
                         usuarios = modificarDados(id, usuarios)
                     }
 
@@ -714,7 +712,6 @@ function main(){
                     }
 
                     if (opcao =='5'){//5. Ver lista de anuncios
-                        var anuncios = sistema.anuncios
                         verAnuncios(anuncios)
                     }
 
@@ -782,12 +779,12 @@ function main(){
             break
         }
     }
-    //atualizando o sistema antes de finalizar o programa
+    //atualizando o sistema antes de encerrar o programa
     sistema.propriedades = propriedades
     sistema.reservas = reservas
     sistema.anuncios = anuncios
     sistema.avaliacoes = avaliacoes
-    
+    return sistema //retorna todas as informacoes cadastradas e alteracoes feitas
 }
 
 main()

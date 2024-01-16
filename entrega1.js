@@ -286,8 +286,6 @@ function reservarPropriedade(usuarios, propriedades, reservas){
         } 
     }
 
-    if (disponibilidade())
-
     while (true){
         var usuarioId = requisicao.question('Digite o id do usuario: ')
         if (idExiste(usuarioId, usuarios)==false){
@@ -369,12 +367,25 @@ function reservarPropriedade(usuarios, propriedades, reservas){
 }
 
 // funcao cancelar reserva (antecedencia de no minimo 24h)
-function cancelarReserva(id, reservas){
-
+function cancelarReserva(reservas){
+    var data_atual = new Date()
+    var requisicao = require('readline-sync')
+    var id = requisicao.question('Digite o id da reserva: ')
+    if (idExisteR(id,reservas) == false){
+        return ('Nao eh possivel cancelar uma reserva que nao existe')
+    }
+    for (let i = 0; i<reservas.length; i+=1){
+        var reserva = reservas[i]
+        if (calcularDiferencaEmDias(data_atual, reserva.checkIn) >= 1 && reserva.id == id) {
+            var reservas_atualizadas = reservas.slice(i, 1)
+            console.log('A reserva foi cancelada')  
+        }
+    }
+    return reservas_atualizadas
 }
 
 
-// funcao disponibilidade da propriedade
+// funcao disponibilidade da propriedade, para conferir se a propriedade pode receber hospedes 
 
 function disponibilidade(propriedade){
     if (propriedade.numQuartos > 0 && propriedade.capacidadeHospedes > 0){
@@ -446,7 +457,7 @@ function excluirPropriedade(propriedades, reservas){
         for (let i = 0; i<propriedades.length; i+=1){
             var propriedade = propriedades[i]
             if (idp == propriedade.id){
-                propriedades_atualizadas = propriedades.slice(i, 1)
+                var propriedades_atualizadas = propriedades.slice(i, 1)
                 console.log('A propriedade foi excluida')
             }
         }
@@ -625,17 +636,19 @@ function main(){
                         let usuarios = sistema.usuarios
                         let propriedades = sistema.propriedades
                         let reservas = sistema.reservas
-                        var resultadoo = reservarPropriedade(usuarios, propriedades, reservas)
-                        var usuarios_atualizados = resultadoo.res3
-                        var reservas_atualizadas = resultadoo.res2
-                        var propriedades_atualizada = resultadoo.res1
+                        let resultadoo = reservarPropriedade(usuarios, propriedades, reservas)
+                        let usuarios_atualizados = resultadoo.res3
+                        let reservas_atualizadas = resultadoo.res2
+                        let propriedades_atualizada = resultadoo.res1
                         sistema.propriedades = propriedades_atualizada
                         sistema.reservas = reservas_atualizadas
                         sistema.usuarios = usuarios_atualizados
                     }
 
                     if (opcao == '7'){
-
+                        let reservas = sistema.reservas
+                        let reservas_atualizadas = cancelarReserva(reservas)
+                        sistema.reservas = reservas_atualizadas
                     }
 
                     if (opcao == '8'){

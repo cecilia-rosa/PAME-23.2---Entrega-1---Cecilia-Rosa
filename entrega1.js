@@ -11,6 +11,20 @@ class Usuario {
     }
   }
 
+class Administrador extends Usuario {
+    constructor(id, nome, enderecoContato, historicoReservas, senha, codigoPermissao) {
+      super(id, nome, enderecoContato, historicoReservas, senha);
+      this.codigoPermissao = codigoPermissao;
+    }
+  }
+
+  class Proprietario extends Usuario {
+    constructor(id, nome, enderecoContato, historicoReservas, senha, propriedade) {
+      super(id, nome, enderecoContato, historicoReservas, senha);
+      this.propriedade = propriedade;
+    }
+  }
+
 
 // classe propriedade com os atributos id unico, nome, endereco, capacidade de hospedes, numero de quartos, preco por noite e disponibilidade
 class Propriedade {

@@ -1,5 +1,6 @@
 // criando as 5 classes: usuario, propriedade, reserva, anuncio e sistema
 
+// classe usuario com os atributos id unico, nome, endereco de contato e historico de reservas
 class Usuario {
     constructor(id, nome, enderecoContato, historicoReservas) {
       this.id = id;
@@ -9,6 +10,8 @@ class Usuario {
     }
   }
 
+
+// classe propriedade com os atributos id unico, nome, endereco, capacidade de hospedes, numero de quartos, preco por noite e disponibilidade
 class Propriedade {
     constructor(id, nome, endereco, capacidadeHospedes, numQuartos, precoPorNoite, disponibilidade) {
       this.id = id;
@@ -20,7 +23,8 @@ class Propriedade {
       this.disponibilidade = disponibilidade;
     }
   }
-  
+
+// classe reserva com os atributos id unico, id da propriedade, id do usuario, data de check in, data de check out, valor total da reserva e status de pagamento
 class Reserva {
     constructor(id, propriedadeId, usuarioId, checkIn, checkOut, valorTotal, statusPagamento) {
       this.id = id;
@@ -32,7 +36,8 @@ class Reserva {
       this.statusPagamento = statusPagamento;
     }
   }
-  
+
+// classe anuncio com os atributos id unico, id do proprietario, id da propriedade, titulo, descricao e status
 class Anuncio {
     constructor(id, proprietarioId, propriedadeId, titulo, descricao, status) {
       this.id = id;
@@ -44,6 +49,8 @@ class Anuncio {
     }
   }
 
+
+// classe avaliacao criada para facilitar o registro de avaliacoes, com os atributos id da propriedade a ser avaliada, nota dada e comentario
 class Avaliacao {
     constructor(idPropriedade, nota, comentario) {
       this.idPropriedade = idPropriedade;
@@ -51,10 +58,10 @@ class Avaliacao {
       this.comentario = comentario;
     }
   }
-  
+
+// classe sistema para gerenciar interacoes 
 class Sistema {
     constructor() {
-      this.propriedades = [];
       this.propriedades = [];
       this.reservas = [];
       this.anuncios = [];
@@ -96,7 +103,7 @@ function fazerLogin(usuarios){
     return {chave1: logado, chave2: id};
 }
 
-// funcao id existe para funcao cadastro
+// funcao auxiliar id existe para ser usada em diversas outras funcoes
 
 function idExiste(id, usuarios){
     var id_existe = false
@@ -128,14 +135,13 @@ function fazerCadastro(usuarios){
     var enderecoContato = requisicao.question('Digite seu endereco para contato: ')
     var historicoReservas = []
     var usuario = new Usuario (idn, nome, enderecoContato, historicoReservas)
-    var usuarios_atualizados = usuarios.push(usuario)
-    return usuarios_atualizados;
-
+    usuarios.push(usuario)
+    return usuarios
 }
 
 
 
-// funcao ver os proprios dados 
+// funcao ver os proprios dados (foram printados todos porque ainda nao consegui gerar um id aleatorio e o tirar das funcoes)
 
 function verDados(id, usuarios){
     for (let i = 0; i<usuarios.length; i+=1){
@@ -150,6 +156,7 @@ function verDados(id, usuarios){
 // funcao modificar os proprios dados 
 
 function modificarDados(id, usuarios){
+// nao permite modificacao do id, elemento usado para controle de tudo
     for (let i = 0; i<usuarios.length; i+=1){
         var usuario = usuarios[i]
         if(usuario.id==id){
@@ -160,6 +167,7 @@ function modificarDados(id, usuarios){
             var nome = requisicao.question('Digite o novo nome: ')
             var endereco = requisicao.question('Digite o novo endereco: ')
             usuario_modificado = new Usuario(id, nome, endereco, historicoReservas)
+            //atualiza a posicao i para o novo usuario
             usuarios[i] = usuario_modificado
         }
     }
@@ -170,14 +178,15 @@ function modificarDados(id, usuarios){
 
 function verPropriedades(propriedades){
     var propriedades = propriedades
+    // inicia lista para armazenar os nomes
     var nomes_p=[]
-    for (let i=0; i<propriedades.length; i+=1){
+    for (let i=0; i<propriedades.length; i+=1){ // adiciona cada nome a essa lista
         var propriedade=propriedades[i]
         var nomep = propriedade.nome
         nomes_p.push(nomep)
     }
-    var nomes_ordem = nomes_p.sort()
-    for (let i=0; i<nomes_ordem.length; i+=1){
+    var nomes_ordem = nomes_p.sort() // organiza a lista de nomes em ordem alfabetica
+    for (let i=0; i<nomes_ordem.length; i+=1){ //percorre a lista de nomes ao mesmo tempo que a lista de propriedades, para entao printar na ordem salva na lista de nomes
         let nome_o = nomes_ordem[i]
         for (let j=0; j<propriedades.length; j+=1){
             let propriedade = propriedades[j]
@@ -189,26 +198,27 @@ function verPropriedades(propriedades){
 }
 
 
-
-// funcao ver lista de reservas (ordem cronologica)
-
+// funcao auxiliar para ordenar as datas em ordem cronologica
 function ordenarDatas(listaDatas) {
     return listaDatas.sort((data1, data2) => data1.getTime() - data2.getTime());
   }
 
+
+// funcao ver lista de reservas (ordem cronologica)
 function verReservas (reservas){
-    var datas = []
+    var datas = [] // cria lista de datas vazias para armazena-las
     for (let i = 0; i<reservas.length; i+=1){
-        var reserva = reservas[i]
-        var data = reserva.checkIn
-        datas.push(data)
+        let reserva = reservas[i]
+        let data = reserva.checkIn
+        datas.push(data) // adiciona todas as datas a essa lista
     }
-    for (let j = 0; j<datas.length; j+=1){
-        var data = datas[j]
+    datas = ordenarDatas(datas) // utiliza a funcao auxiliar para ordenar as datas em ordem cronologica
+    for (let j = 0; j<datas.length; j+=1){ // percorre a lista de datas junto com a lista de reservas, para imprimir as reservas na ordem em que as respectivas datas foram organizadas
+        let data = datas[j]
         for (let i = 0; i<reservas.length; i+=1){
-            var reserva = reservas[i]
+            let reserva = reservas[i]
            if (data==reserva.checkIn){
-            console.log(reserva)
+            console.log(reserva) // vai printando cada uma das reservas
            }
         }
     } 
@@ -218,29 +228,40 @@ function verReservas (reservas){
 
 // funcao ver lista de anuncios (ordem alfabetica)
 
-function verAnuncios(anuncios){
+function verAnuncios(anuncios){ // funciona de forma semelhante a de ver propriedades
     var anuncios = anuncios
-    var nomes_a=[]
-    for (let i=0; i<anuncios.length; i+=1){
+    var nomes_a=[] // cria lista auxiliar para os nomes dos anuncios
+    for (let i=0; i<anuncios.length; i+=1){ // vai adicionando os nomes dos anuncios a lista de nomes
         var anuncio=anuncios[i]
         var nomea = anuncio.nome
         nomes_a.push(nomea)
     }
-    var nomes_ordem = nomes_a.sort()
-    for (let i=0; i<nomes_ordem.length; i+=1){
+    var nomes_ordem = nomes_a.sort() // ordena a lista de nomes em ordem alfabetica
+    for (let i=0; i<nomes_ordem.length; i+=1){ // percorre a lista de nomes junto com a lista de anuncios, para imprimir os anuncios na ordem em que as respectivos nomes foram organizados
         let nome_o = nomes_ordem[i]
         for (let j=0; j<anuncios.length; j+=1){
             let anuncio = anuncios[j]
             if (anuncio.nome == nome_o){
-                console.log(anuncio)
+                console.log(anuncio) // vai printando cada anuncio
             }
         }
     }
 
 }
 
+// funcao auxiliar disponibilidade da propriedade, para conferir se a propriedade pode receber hospedes 
 
-// funcao reservar propriedade 
+function disponibilidade(propriedade){
+    if (propriedade.numQuartos > 0 && propriedade.capacidadeHospedes > 0){
+        var disp = true
+    }
+    else if (propriedade.numQuartos==0 || propriedade.capacidadeHospedes==0){
+        var disp = false
+    }
+    return disp
+}
+
+// funcoes auxiliares id da reserva ja existe e diferenca em dias de duas datas  
 
 function idExisteR(id, reservas){
     var id_existe = false
@@ -263,8 +284,10 @@ function calcularDiferencaEmDias(data1, data2) {
     return diferencaEmDias;
   }
 
+// funcao reservar propriedade 
+
 function reservarPropriedade(usuarios, propriedades, reservas){
-    while (true){
+    while (true){ //fica em loop ate que um id nao registrado seja escolhido
         var id = requisicao.question('Escolha um id de 5 digitos: ')
         if (idExisteR(id, reservas)==false){
             var idn = id
@@ -275,7 +298,7 @@ function reservarPropriedade(usuarios, propriedades, reservas){
         } 
     }
 
-    while (true){
+    while (true){ // fica em loop ate que um id registrado de propriedade seja escolhido
         var propriedadeId = requisicao.question('Digite o id da propriedade: ')
         if (idExistep(propriedadeId, propriedades)==false){
             console.log('Esse id nao existe, por favor escolha outro')
@@ -286,7 +309,7 @@ function reservarPropriedade(usuarios, propriedades, reservas){
         } 
     }
 
-    while (true){
+    while (true){ // fica em loop ate que um id registrado de usuario seja escolhido
         var usuarioId = requisicao.question('Digite o id do usuario: ')
         if (idExiste(usuarioId, usuarios)==false){
             console.log('Esse id nao existe, por favor escolha outro')
@@ -296,21 +319,21 @@ function reservarPropriedade(usuarios, propriedades, reservas){
             break
         } 
     }
-    for (let i = 0; i<propriedades.length; i+=1){
+    for (let i = 0; i<propriedades.length; i+=1){ //encontra a propriedade na lista de propriedades
         var propriedade = propriedades[i]
         if (idPropriedade==propriedade.id){
             var propriedadeA = propriedade
             break
         }
     }
-    if (disponibilidade(propriedadeA) == false){
+    if (disponibilidade(propriedadeA) == false){ //verifica se a propriedade escolhida pode receber novas reservas
         return ('Nao eh possivel realizar a reserva, pois a propriedade nao tem disponibilidade')
     }
 
-    var numP = requisicao.question('Digite o numero de pessoas: ')
+    var numP = requisicao.question('Digite o numero de pessoas: ') //pergunta numero de pessoas para remover da capacidade registrada da propriedade
     var numPessoas = number(numP)
 
-    
+    // requisicoes para datas de check in e check out, seguidas de transformacao em objetos do tipo number para entao transformar em date
     var anoCI = requisicao.question('Digite o ano do check in (YYYY): ')
     var CIano = number(anoCI)
     var mesCI = requisicao.question('Digite o mes do check in (janeiro = 0): ')
@@ -335,15 +358,15 @@ function reservarPropriedade(usuarios, propriedades, reservas){
     var COminuto = number(minutoCO)
     var checkOut = new Date (COano, COmes, COdia, COhora, COminuto, 0, 0)
 
-    var diarias = calcularDiferencaEmDias(checkin, checkOut)
-    var valorTotal = (propriedade.precoPorNoite)*diarias
+    var diarias = calcularDiferencaEmDias(checkin, checkOut) //calcula o numero de diarias atraves da funcao auxiliar que calcula a diferenca em dias
+    var valorTotal = (propriedade.precoPorNoite)*diarias //calcula o valor total
 
     var statusPagamento = requisicao.question('Digite o status do pagamento: ')
 
-    propriedadeA.numQuartos = propriedadeA.numQuartos - 1
-    propriedadeA.capacidadeHospedes = propriedadeA.capacidadeHospedes - numPessoas
+    propriedadeA.numQuartos = propriedadeA.numQuartos - 1 // atualiza numero de quartos disponiveis na propriedade
+    propriedadeA.capacidadeHospedes = propriedadeA.capacidadeHospedes - numPessoas // atualiza capacidade de hospedes atual da propriedade
 
-    for (let i = 0; i<propriedades.length; i+=1){
+    for (let i = 0; i<propriedades.length; i+=1){ //atualiza lista de propriedades com a propriedade com o numero de quartos e capacidade atualizados
         var propriedade = propriedades[i]
         if (propriedadeA.id==propriedade.id){
             propriedades[i] = propriedadeA
@@ -351,10 +374,10 @@ function reservarPropriedade(usuarios, propriedades, reservas){
         }
     }
 
-    var reserva = new Reserva (idn, idPropriedade, idUsuario, checkin, checkOut, valorTotal, statusPagamento)
+    var reserva = new Reserva (idn, idPropriedade, idUsuario, checkin, checkOut, valorTotal, statusPagamento) // cria reserva da classe Reserva
     var reservas_atualizadas = reservas.push(reserva)
 
-    for (let i = 0; i<usuarios.length; i+=1){
+    for (let i = 0; i<usuarios.length; i+=1){ // acha usuario pelo id e adiciona reserva ao historico de reservas
         var usuario = usuarios[i]
         if (idUsuario==usuario.id){
             usuario.historicoReservas = usuario.historicoReservas.push(reserva)
@@ -362,44 +385,31 @@ function reservarPropriedade(usuarios, propriedades, reservas){
         }
     }
     
-    return {res1:propriedades, res2: reservas_atualizadas, res3: usuarios}
+    return {res1:propriedades, res2: reservas_atualizadas, res3: usuarios} // retorna propriedades, reservas e usuarios atualizados
 
 }
 
 // funcao cancelar reserva (antecedencia de no minimo 24h)
+
 function cancelarReserva(reservas){
     var data_atual = new Date()
     var requisicao = require('readline-sync')
     var id = requisicao.question('Digite o id da reserva: ')
-    if (idExisteR(id,reservas) == false){
+    if (idExisteR(id,reservas) == false){ // confere se reserva a ser cancelada existe
         return ('Nao eh possivel cancelar uma reserva que nao existe')
     }
     for (let i = 0; i<reservas.length; i+=1){
         var reserva = reservas[i]
-        if (calcularDiferencaEmDias(data_atual, reserva.checkIn) >= 1 && reserva.id == id) {
-            var reservas_atualizadas = reservas.slice(i, 1)
-            console.log('A reserva foi cancelada')  
+        if (calcularDiferencaEmDias(data_atual, reserva.checkIn) >= 1 && reserva.id == id) { //confere se tem pelo menos 24h para a reserva
+            var reservas_atualizadas = reservas.slice(i, 1) // remove a reserva
+            console.log('A reserva foi cancelada')  //notifica que a reserva foi removida com sucesso
         }
     }
     return reservas_atualizadas
 }
 
 
-// funcao disponibilidade da propriedade, para conferir se a propriedade pode receber hospedes 
-
-function disponibilidade(propriedade){
-    if (propriedade.numQuartos > 0 && propriedade.capacidadeHospedes > 0){
-        var disp = true
-    }
-    else if (propriedade.numQuartos==0 || propriedade.capacidadeHospedes==0){
-        var disp = false
-    }
-    return disp
-}
-
-
-// funcao adicionar propriedade
-
+// funcao auxiliar para verificar se id da propriedade existe 
 function idExistep(id, propriedades){
     var id_existe = false
     for (let i = 0; i<propriedades.length; i+=1){
@@ -412,10 +422,12 @@ function idExistep(id, propriedades){
     return id_existe
 }
 
+// funcao adicionar propriedade
+
 function adicionarPropriedade(propriedades){
     var requisicao = require('readline-sync')
     var nome = requisicao.question('Digite o nome da propriedade: ')
-    while (true){
+    while (true){ //garante que o id da propriedade seja unico
         var id = requisicao.question('Escolha um id: ')
         if (idExistep(id, propriedades)==false){
             var idn = id
@@ -433,39 +445,39 @@ function adicionarPropriedade(propriedades){
     var preco = requisicao.question('Digite o preco por noite: ')
     var precoPorNoite = number(preco)
     var disponibilidade = true
-    var propriedade = new Propriedade (idn, nome, endereco, capacidadeHospedes, numQuartos, precoPorNoite, disponibilidade)
-    var propriedades_atualizadas = propriedades.push(propriedade)
-    return propriedades_atualizadas
+    var propriedade = new Propriedade (idn, nome, endereco, capacidadeHospedes, numQuartos, precoPorNoite, disponibilidade) // cria propriedade da classe Propriedades com os dados que foram pedidos
+    propriedades.push(propriedade) //adiciona propriedade a lista de propriedades
+    return propriedades
 }
 
 // funcao excluir propriedade 
 
 function excluirPropriedade(propriedades, reservas){
-    var propriedades_atualizadas = null
     var requisicao = require('readline-sync')
-    var idp = requisicao.question('Qual o id da propriedade que voce deseja excluir?  ')
+    var idp = requisicao.question('Qual o id da propriedade que voce deseja excluir?  ') //pede id para administrador so excluir
     var tem_reserva = false
-        for (let i = 0; i<reservas.length; i+=1){
+        for (let i = 0; i<reservas.length; i+=1){ //confere se ha reserva para essa propriedade
             var reserva = reservas[i]
             if (idp == reserva.propriedadeId){
-                console.log('Nao eh possivel excluir, pois ha reserva.')
+                console.log('Nao eh possivel excluir, pois ha reserva.') //informa que nao eh possivel excluir
                 tem_reserva == true
                 break
             }
         }
-    if (tem_reserva == false){
-        for (let i = 0; i<propriedades.length; i+=1){
+    if (tem_reserva == false){ //so continua se n tem reserva
+        for (let i = 0; i<propriedades.length; i+=1){ //acha propriedade do id informado
             var propriedade = propriedades[i]
             if (idp == propriedade.id){
-                var propriedades_atualizadas = propriedades.slice(i, 1)
+                propriedades.slice(i, 1) //exclui a propriedade
                 console.log('A propriedade foi excluida')
             }
         }
     }
-    return propriedades_atualizadas
+    return propriedades
 }
 
-// funcao fazer anuncio 
+// funcao auxiliar para conferir se anuncio existe
+
 function idExistea(id, anuncios){
     var id_existe = false
     for (let i = 0; i<anuncios.length; i+=1){
@@ -478,11 +490,13 @@ function idExistea(id, anuncios){
     return id_existe
 }
 
+// funcao fazer anuncio 
+
 function fazerAnuncio(anuncios, propriedades){
     var requisicao = require('readline-sync')
     var titulo = requisicao.question('Digite o titulo do anuncio: ')
-    while (true){
-        var id = requisicao.question('Escolha um id: ')
+    while (true){ // garante que o id seja unico
+        var id = requisicao.question('Escolha um id: ') 
         if (idExistea(id, anuncios)==false){
             var idn = id
             break
@@ -494,7 +508,7 @@ function fazerAnuncio(anuncios, propriedades){
 
     var proprietarioId = requisicao.question('Digite o id do proprietario: ')
     
-    while (true){
+    while (true){ //ve se a propriedade a ser anunciada foi registrada
         var propriedadeId = requisicao.question('Digite o id da propriedade: ')
         if (idExistep(propriedadeId, propriedades)==false){
             console.log('Esse id nao existe, por favor escolha outro')
@@ -506,22 +520,22 @@ function fazerAnuncio(anuncios, propriedades){
     }
     var descricao = requisicao.question('Digite a descricao do anuncio: ')
     
-    for (let i = 0; i<propriedades.length; i+=1){
+    for (let i = 0; i<propriedades.length; i+=1){ //acha propriedade atraves do id
         var propriedade = propriedades[i]
         if (idPropriedade==propriedade.id){
             var propriedadeA = propriedade
         }
     }
-    if (disponibilidade(propriedadeA) == true){
+    if (disponibilidade(propriedadeA) == true){ //verifica disponibilidade da propriedade para usar de status do anuncio
         disp = 'disponivel'
     }
     else if (disponibilidade(propriedadeA) == false){
         disp = 'indisponivel'
     }
 
-    var anuncio = new Anuncio (idn, proprietarioId, idPropriedade, titulo, descricao, disp)
-    anuncios_atualizados = anuncios.push(anuncio)
-    return anuncios_atualizados 
+    var anuncio = new Anuncio (idn, proprietarioId, idPropriedade, titulo, descricao, disp) //cria novo anuncio da classe Anuncio
+    anuncios.push(anuncio) //adiciona anuncio criado a lista de anuncios, para retorna-la atualizada
+    return anuncios 
 }
 
 // funcao excluir anuncio 
@@ -529,14 +543,14 @@ function fazerAnuncio(anuncios, propriedades){
 function excluirAnuncio(anuncios){
     var anuncios_atualizados = null
     var requisicao = require('readline-sync')
-    var ido = requisicao.question('Qual o id do anuncio que voce deseja excluir?  ')
-    for (let i = 0; i<anuncios.length; i+=1){
+    var ido = requisicao.question('Qual o id do anuncio que voce deseja excluir?  ') //pede id so para administrador excluir um anuncio
+    for (let i = 0; i<anuncios.length; i+=1){ //acha o anuncio do id fornecido
         var anuncio = anuncios[i]
         if (ido == anuncio.id){
-            anuncios_atualizados = anuncios.slice(i, 1)
+            anuncios.slice(i, 1) //remove o anuncio
         }
     }
-    return anuncios_atualizados
+    return anuncios
 }
 
 // funcao avaliar estadia
@@ -545,19 +559,19 @@ function avaliarEstadia(avaliacoes){
     var requisicao = require('readline-sync')
     var id = requisicao.question('Digite o id da propriedade: ')
     if (idExistep(id) != true){
-        return ('Nao eh possivel avaliar uma propriedade nao registrada')
+        return ('Nao eh possivel avaliar uma propriedade nao registrada') //sai da funcao se o id da propriedade nao existe
     }
     var nota = requisicao.question('Digite a nota: ')
     var comentario = requisicao.question('Digite o comentario: ')
-    var avaliacao = new Avaliacao (id, nota, comentario)
-    var avaliacoes_atualizadas = avaliacoes.push(avaliacao)
-    return avaliacoes_atualizadas
+    var avaliacao = new Avaliacao (id, nota, comentario) //cria avaliacao da classe Avaliacao
+    avaliacoes.push(avaliacao) //adiciona a nova avaliacao na lista de avaliacoes
+    return avaliacoes
 }
 
 // funcao visualizar avaliacoes
 
 function verAvaliacoes(avaliacoes){
-    for (let i = 0; i<avaliacoes.length; i+=1){
+    for (let i = 0; i<avaliacoes.length; i+=1){ // percorre lista de avalicoes e vai printando uma a uma
         var avaliacao = avaliacoes[i]
         console.log(avaliacao)
     }

@@ -644,126 +644,105 @@ function main(){
     var avaliacoes = sistema.avaliacoes
     var usuarioLogado = sistema.usuarioLogado
     while (true){
-        console.log('Seja bem-vindo ao sistema digital de reservas da Pousada Eclipse!');
-        console.log('1. Fazer login');
-        console.log('2. Fazer cadastro');
-        console.log('3. Encerrar programa');
+        console.log('Seja bem-vindo ao sistema digital de reservas da Pousada Eclipse!')
+        console.log('1. Fazer login')
+        console.log('2. Fazer cadastro')
+        console.log('3. Encerrar programa')
 
-        var requisicao = require('readline-sync');
-        var opcao = requisicao.question('Digite uma opcao: ');
+        var requisicao = require('readline-sync')
+        var opcao = requisicao.question('Digite uma opcao: ')
 
-        if (opcao=='1'){
-            var usuarios = sistema.usuarios
+        if (opcao=='1'){ //1. Fazer login
             var resultado = fazerLogin(usuarios)
             var logado = resultado.chave1
             var id = resultado.chave2
             if (logado==true){
                 sistema.usuarioLogado = id
                 while (true){
-                    console.log('Opcoes do usuario logado:');
-                    console.log('1. Ver meus dados');
-                    console.log('2. Modificar meus dados');
-                    console.log('3. Ver lista de propriedades');
-                    console.log('4. Ver listas de reservas');
-                    console.log('5. Ver lista de anuncios');
-                    console.log('6. Reservar propriedade');
-                    console.log('7. Cancelar reserva');
-                    console.log('8. Adicionar propriedade');
-                    console.log('9. Excluir propriedade');
-                    console.log('10. Fazer anuncio');
-                    console.log('11. Excluir anuncio');
+                    console.log('Opcoes do usuario logado:')
+                    console.log('1. Ver meus dados')
+                    console.log('2. Modificar meus dados')
+                    console.log('3. Ver lista de propriedades')
+                    console.log('4. Ver listas de reservas')
+                    console.log('5. Ver lista de anuncios')
+                    console.log('6. Reservar propriedade')
+                    console.log('7. Cancelar reserva')
+                    console.log('8. Adicionar propriedade')
+                    console.log('9. Excluir propriedade')
+                    console.log('10. Fazer anuncio')
+                    console.log('11. Excluir anuncio')
                     console.log('12. Avaliar estadia')
-                    console.log('13. Visualizar avaliacoes');
-                    console.log('14. Voltar ao menu inicial');
+                    console.log('13. Visualizar avaliacoes')
+                    console.log('14. Voltar ao menu inicial')
 
                     var requisicao = require('readline-sync')
                     var opcao = requisicao.question('Digite uma opcao: ')
 
-                    if (opcao=='1'){
+                    if (opcao=='1'){//1. Ver meus dados
                         var id = sistema.usuarioLogado;
-                        var usuarios = sistema.propriedades;
                         verDados(id, usuarios)
                     }
 
-                    if (opcao=='2'){
-                        var id = sistema.usuarioLogado;
-                        var usuarios = sistema.propriedades;
-                        var usuariosmodificado = modificarDados(id, usuarios)
-                        sistema.propriedades = usuariosmodificado
+                    if (opcao=='2'){//2. Modificar meus dados
+                        var id = sistema.usuarioLogado
+                        usuarios = modificarDados(id, usuarios)
                     }
 
-                    if (opcao=='3'){
-                        var propriedades = sistema.propriedades
+                    if (opcao=='3'){//3. Ver lista de propriedades
                         verPropriedades(propriedades)
                     }
 
-                    if (opcao =='4'){
-                        var reservas = sistema.reservas
+                    if (opcao =='4'){//4. Ver listas de reservas
                         verReservas(reservas)
                     }
 
-                    if (opcao =='5'){
+                    if (opcao =='5'){//5. Ver lista de anuncios
                         var anuncios = sistema.anuncios
                         verAnuncios(anuncios)
                     }
 
-                    if (opcao =='6'){
-                        let usuarios = sistema.usuarios
-                        let propriedades = sistema.propriedades
-                        let reservas = sistema.reservas
-                        let resultadoo = reservarPropriedade(usuarios, propriedades, reservas)
-                        let usuarios_atualizados = resultadoo.res3
-                        let reservas_atualizadas = resultadoo.res2
-                        let propriedades_atualizada = resultadoo.res1
-                        sistema.propriedades = propriedades_atualizada
-                        sistema.reservas = reservas_atualizadas
-                        sistema.usuarios = usuarios_atualizados
+                    if (opcao =='6'){//6. Reservar propriedade
+                        let idUsuario = sistema.usuarioLogado
+                        let resultadoo = reservarPropriedade(idUsuario,usuarios, propriedades, reservas)
+                        usuarios = resultadoo.res3
+                        reservas = resultadoo.res2
+                        propriedades = resultadoo.res1
                     }
 
-                    if (opcao == '7'){
-                        let reservas = sistema.reservas
-                        let reservas_atualizadas = cancelarReserva(reservas)
-                        sistema.reservas = reservas_atualizadas
+                    if (opcao == '7'){//7. Cancelar reserva
+                        if(cancelarReserva(reservas) != 'Nao eh possivel cancelar uma reserva que nao existe'){ //nao perde a lista de reservas caso a funcao retorne que nao eh possivel
+                            reservas = cancelarReserva(reservas)
+                        }
+                        
                     }
 
-                    if (opcao == '8'){
-                        let propriedades = sistema.propriedades
-                        let propriedades_atualizadas = adicionarPropriedade(propriedades)
-                        sistema.propriedades = propriedades_atualizadas
+                    if (opcao == '8'){//8. Adicionar propriedade
+                        propriedades = adicionarPropriedade(propriedades)
                     }
 
-                    if (opcao == '9'){
-                        let reservas = sistema.reservas
-                        let propriedades = sistema.propriedades
-                        let propriedades_atualizadas = excluirPropriedade(propriedades, reservas)
-                        sistema.propriedades = propriedades_atualizadas
+                    if (opcao == '9'){//9. Excluir propriedade
+                        propriedades = excluirPropriedade(propriedades, reservas)
                     }
 
-                    if (opcao == '10'){
-                        let anuncios = sistema.anuncios
-                        let propriedades = sistema.propriedades
-                        anuncios_atualizados = fazerAnuncio(anuncios, propriedades)
-                        sistema.anuncios = anuncios_atualizados 
+                    if (opcao == '10'){//10. Fazer anuncio
+                        anuncios = fazerAnuncio(anuncios, propriedades) 
                     }
 
-                    if (opcao == '11'){
-                        let anuncios = sistema.anuncios
-                        let anuncios_atualizados = excluirAnuncio(anuncios)
-                        sistema.anuncios = anuncios_atualizados
+                    if (opcao == '11'){//11. Excluir anuncio
+                        anuncios = excluirAnuncio(anuncios)
                     }
 
-                    if (opcao == '12'){
-                        let avaliacoes = sistema.avaliacoes
-                        let avaliacoes_atualizadas = avaliarEstadia(avaliacoes)
-                        sistema.avaliacoes = avaliacoes_atualizadas
+                    if (opcao == '12'){//12. Avaliar estadia
+                        if(avaliarEstadia(avaliacoes) != 'Nao eh possivel avaliar uma propriedade nao registrada'){// nao perde lista de avaliacoes caso funcao retorne que nao eh possivel fazer avaliacao
+                            avaliacoes = avaliarEstadia(avaliacoes)
+                        }    
                     }
 
-                    if (opcao == '13'){ 
-                        var avaliacoes = sistema.avaliacoes
+                    if (opcao == '13'){ //13. Visualizar avaliacoes
                         verAvaliacoes(avaliacoes)
                     }
 
-                    if (opcao == '14'){
+                    if (opcao == '14'){//14. Voltar ao menu inicial
                         break
                     }
                     
@@ -775,21 +754,22 @@ function main(){
             }
         }
 
-        else if (opcao=='2'){
-            var usuarios = sistema.propriedades
-            var propriedades_atualizadas = fazerCadastro(usuarios)
-            sistema.propriedades = propriedades_atualizadas
+        else if (opcao=='2'){ //2. Fazer cadastro
+            usuarios = fazerCadastro(usuarios)
         }
 
-        else if (opcao=='3'){
+        else if (opcao=='3'){ //3. Encerrar programa
             console.log('programa encerrado')
             break
         }
     }
+    //atualizando o sistema antes de finalizar o programa
+    sistema.propriedades = propriedades
+    sistema.reservas = reservas
+    sistema.anuncios = anuncios
+    sistema.avaliacoes = avaliacoes
     
 }
-
-
 
 main()
 

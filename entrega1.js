@@ -51,10 +51,10 @@ class Anuncio {
   }
 
 
-// classe avaliacao criada para facilitar o registro de avaliacoes, com os atributos id da propriedade a ser avaliada, nota dada e comentario
+// classe avaliacao criada para facilitar o registro de avaliacoes, com os atributos nome da propriedade a ser avaliada, nota e comentario
 class Avaliacao {
     constructor(idPropriedade, nota, comentario) {
-      this.idPropriedade = idPropriedade;
+      this.nomePropriedade = nomePropriedade;
       this.nota = nota;
       this.comentario = comentario;
     }
@@ -335,11 +335,38 @@ function calcularDiferencaEmDias(data1, data2) {
     return diferencaEmDias;
   }
 
+// funcao auxiliar para verificar se id da propriedade existe 
+function idExistep(id, propriedades){
+    var id_existe = false
+    for (let i = 0; i<propriedades.length; i+=1){
+        var propriedade=propriedades[i]
+        if (propriedade.id == id){
+            id_existe = true
+            break  
+        }
+}
+    return id_existe
+}
+
+// funcao auxiliar para verificar se nome da propriedade existe
+function nomeExistep(nome, propriedades){
+    var nome_existe = false
+    for (let i = 0; i<propriedades.length; i+=1){
+        var propriedade=propriedades[i]
+        if (propriedade.nome == nome){
+            nome_existe = true
+            break  
+        }
+}
+    return nome_existe
+}
+
+
 // funcao reservar propriedade 
 
-function reservarPropriedade(usuarios, propriedades, reservas){
+function reservarPropriedade(idusuario, usuarios, propriedades, reservas){
     while (true){ //fica em loop ate que um id nao registrado seja escolhido
-        var id = requisicao.question('Escolha um id de 5 digitos: ')
+        var id = gerarIdAleatorio()
         if (idExisteR(id, reservas)==false){
             var idn = id
             break
@@ -349,30 +376,20 @@ function reservarPropriedade(usuarios, propriedades, reservas){
         } 
     }
 
-    while (true){ // fica em loop ate que um id registrado de propriedade seja escolhido
-        var propriedadeId = requisicao.question('Digite o id da propriedade: ')
-        if (idExistep(propriedadeId, propriedades)==false){
-            console.log('Esse id nao existe, por favor escolha outro')
+    while (true){ // fica em loop ate que um nome registrado de propriedade seja escolhido
+        var nome_propriedade = requisicao.question('Digite o nome da propriedade: ')
+        if (nomeExistep(nome_propriedade, propriedades)==false){
+            console.log('Esse nome nao existe, por favor escolha outro')
         }
-        else if (idExistep(propriedadeId, propriedades) == true){
-            var idPropriedade = propriedadeId
+        else if (nomeExistep(nome_propriedade, propriedades) == true){
+            var nomePropriedade = nome_propriedade
             break
         } 
     }
 
-    while (true){ // fica em loop ate que um id registrado de usuario seja escolhido
-        var usuarioId = requisicao.question('Digite o id do usuario: ')
-        if (idExiste(usuarioId, usuarios)==false){
-            console.log('Esse id nao existe, por favor escolha outro')
-        }
-        else if (idExistep(usuarioId, usuarios) == true){
-            var idUsuario = usuarioId
-            break
-        } 
-    }
     for (let i = 0; i<propriedades.length; i+=1){ //encontra a propriedade na lista de propriedades
         var propriedade = propriedades[i]
-        if (idPropriedade==propriedade.id){
+        if (nomePropriedade==propriedade.nome){
             var propriedadeA = propriedade
             break
         }
@@ -416,6 +433,7 @@ function reservarPropriedade(usuarios, propriedades, reservas){
 
     propriedadeA.numQuartos = propriedadeA.numQuartos - 1 // atualiza numero de quartos disponiveis na propriedade
     propriedadeA.capacidadeHospedes = propriedadeA.capacidadeHospedes - numPessoas // atualiza capacidade de hospedes atual da propriedade
+    var idPropriedade = propriedadeA.id
 
     for (let i = 0; i<propriedades.length; i+=1){ //atualiza lista de propriedades com a propriedade com o numero de quartos e capacidade atualizados
         var propriedade = propriedades[i]
@@ -425,7 +443,7 @@ function reservarPropriedade(usuarios, propriedades, reservas){
         }
     }
 
-    var reserva = new Reserva (idn, idPropriedade, idUsuario, checkin, checkOut, valorTotal, statusPagamento) // cria reserva da classe Reserva
+    var reserva = new Reserva (idn, idPropriedade, idusuario, checkin, checkOut, valorTotal, statusPagamento) // cria reserva da classe Reserva
     var reservas_atualizadas = reservas.push(reserva)
 
     for (let i = 0; i<usuarios.length; i+=1){ // acha usuario pelo id e adiciona reserva ao historico de reservas
@@ -445,7 +463,7 @@ function reservarPropriedade(usuarios, propriedades, reservas){
 function cancelarReserva(reservas){
     var data_atual = new Date()
     var requisicao = require('readline-sync')
-    var id = requisicao.question('Digite o id da reserva: ')
+    var id = requisicao.question('Digite o id da reserva: ') //cancelamento feito apenas por adm
     if (idExisteR(id,reservas) == false){ // confere se reserva a ser cancelada existe
         return ('Nao eh possivel cancelar uma reserva que nao existe')
     }
@@ -460,18 +478,6 @@ function cancelarReserva(reservas){
 }
 
 
-// funcao auxiliar para verificar se id da propriedade existe 
-function idExistep(id, propriedades){
-    var id_existe = false
-    for (let i = 0; i<propriedades.length; i+=1){
-        var propriedade=propriedades[i]
-        if (propriedade.id == id){
-            id_existe = true
-            break  
-        }
-}
-    return id_existe
-}
 
 // funcao adicionar propriedade
 
@@ -479,7 +485,7 @@ function adicionarPropriedade(propriedades){
     var requisicao = require('readline-sync')
     var nome = requisicao.question('Digite o nome da propriedade: ')
     while (true){ //garante que o id da propriedade seja unico
-        var id = requisicao.question('Escolha um id: ')
+        var id = gerarIdAleatorio()
         if (idExistep(id, propriedades)==false){
             var idn = id
             break
@@ -547,7 +553,7 @@ function fazerAnuncio(anuncios, propriedades){
     var requisicao = require('readline-sync')
     var titulo = requisicao.question('Digite o titulo do anuncio: ')
     while (true){ // garante que o id seja unico
-        var id = requisicao.question('Escolha um id: ') 
+        var id = gerarIdAleatorio()
         if (idExistea(id, anuncios)==false){
             var idn = id
             break
@@ -607,13 +613,13 @@ function excluirAnuncio(anuncios){
 
 function avaliarEstadia(avaliacoes, propriedades){
     var requisicao = require('readline-sync')
-    var id = requisicao.question('Digite o id da propriedade: ')
-    if (idExistep(id, propriedades) != true){
+    var nome = requisicao.question('Digite o nome da propriedade: ')
+    if (nomeExistep(nome, propriedades) != true){
         return ('Nao eh possivel avaliar uma propriedade nao registrada') //sai da funcao se a propriedade nao existe
     }
     var nota = requisicao.question('Digite a nota: ')
     var comentario = requisicao.question('Digite o comentario: ')
-    var avaliacao = new Avaliacao (id, nota, comentario) //cria avaliacao da classe Avaliacao
+    var avaliacao = new Avaliacao (nome, nota, comentario) //cria avaliacao da classe Avaliacao
     avaliacoes.push(avaliacao) //adiciona a nova avaliacao na lista de avaliacoes
     return avaliacoes
 }

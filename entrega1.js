@@ -82,6 +82,12 @@ class Sistema {
     }
 }
   
+// funcao auxiliar que gera id aleatorio
+
+function gerarIdAleatorio() {
+    // Gera um numero aleatorio de 7 digitos
+    return Math.floor(Math.random() * 9000000) + 1000000
+  }
 
 // funcao fazer login
 
@@ -100,7 +106,7 @@ function fazerLogin(usuarios){
             break
         }
     }
-    return {chave1: logado, chave2: id};
+    return {chave1: logado, chave2: ID};
 }
 
 // funcao auxiliar id existe para ser usada em diversas outras funcoes
@@ -555,11 +561,11 @@ function excluirAnuncio(anuncios){
 
 // funcao avaliar estadia
 
-function avaliarEstadia(avaliacoes){
+function avaliarEstadia(avaliacoes, propriedades){
     var requisicao = require('readline-sync')
     var id = requisicao.question('Digite o id da propriedade: ')
-    if (idExistep(id) != true){
-        return ('Nao eh possivel avaliar uma propriedade nao registrada') //sai da funcao se o id da propriedade nao existe
+    if (idExistep(id, propriedades) != true){
+        return ('Nao eh possivel avaliar uma propriedade nao registrada') //sai da funcao se a propriedade nao existe
     }
     var nota = requisicao.question('Digite a nota: ')
     var comentario = requisicao.question('Digite o comentario: ')
@@ -571,7 +577,7 @@ function avaliarEstadia(avaliacoes){
 // funcao visualizar avaliacoes
 
 function verAvaliacoes(avaliacoes){
-    for (let i = 0; i<avaliacoes.length; i+=1){ // percorre lista de avalicoes e vai printando uma a uma
+    for (let i = 0; i<avaliacoes.length; i+=1){ //percorre lista de avalicoes e vai printando uma a uma
         var avaliacao = avaliacoes[i]
         console.log(avaliacao)
     }

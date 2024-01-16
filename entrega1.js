@@ -7,6 +7,7 @@ class Usuario {
       this.nome = nome;
       this.enderecoContato = enderecoContato;
       this.historicoReservas = historicoReservas;
+      this.senha = senha;
     }
   }
 
@@ -94,15 +95,15 @@ function gerarIdAleatorio() {
 function fazerLogin(usuarios){
     var requisicao = require('readline-sync')
     var nome = requisicao.question('Digite o seu nome: ')
-    var id = requisicao.question('Digite o seu id: ')
+    var senha = requisicao.question('Digite a sua senha: ')
     let logado = false
     let ID = null
-    for (let i = 0; i<usuarios.length; i+=1){
+    for (let i = 0; i<usuarios.length; i+=1){ // percorre lista de usuarios para localizar e validar
         var usuario = usuarios[i]
-        if (usuario.nome==nome && usuario.id==id){
+        if (usuario.nome==nome && usuario.senha==senha){
             console.log('O login foi realizado com sucesso')
             logado=true
-            ID=id
+            ID = usuario.id //acha id do usuario logado
             break
         }
     }
@@ -127,21 +128,19 @@ function idExiste(id, usuarios){
 
 function fazerCadastro(usuarios){
     var requisicao = require('readline-sync')
-    var nome = requisicao.question('Digite o seu nome ')
+    var nome = requisicao.question('Digite o seu nome: ')
     while (true){
-        var id = requisicao.question('Escolha um id de 5 digitos: ')
+        var id = gerarIdAleatorio()
         if (idExiste(id, usuarios)==false){
             var idn = id
             break
         }
-        else if (idExiste(id, usuarios) == true){
-            console.log('Esse id ja existe, por favor escolha outro')
-        } 
     }
     var enderecoContato = requisicao.question('Digite seu endereco para contato: ')
     var historicoReservas = []
-    var usuario = new Usuario (idn, nome, enderecoContato, historicoReservas)
-    usuarios.push(usuario)
+    var senha = requisicao.question('Escolha uma senha: ')
+    var usuario = new Usuario (idn, nome, enderecoContato, historicoReservas, senha) // cria usuario da classe Usuario
+    usuarios.push(usuario) //add a lista de usuarios
     return usuarios
 }
 
